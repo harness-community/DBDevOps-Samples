@@ -1,0 +1,22 @@
+package db_sql
+
+deny[msg] {
+    some l
+    sql := lower(input.sqlStatements[l])
+
+    create_table_matches := regex.find_n(`(?i)create\s+table\s+([a-zA-Z0-9_]+\.)?([a-zA-Z0-9_]+)`, sql, -1)
+
+    some j
+    table_name := create_table_matches[j]
+    parts := split(table_name, ".")
+    actual_table_name := parts[count(parts) - 1]
+
+    pk_matches := regex.find_all_string_submatch_n(`(?i)constraint ([a-zA-Z0-9_]+) primary key \([a-zA-Z0-9_]+\)`, sql, -1)
+
+    pk_groups := pk_matches[count(pk_matches) -1]
+    pk_name = pk_groups[count(pk_groups) -1]
+    
+    pk_name != sprintf("pk_%s",[actual_table_name])
+
+    msg := sprintf("Primary key: '%s' does not match table name: '%s'", [pk_name, actual_table_name])
+}

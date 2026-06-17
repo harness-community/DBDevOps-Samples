@@ -1,0 +1,823 @@
+
+# ╔════════════════════════════════════════════════════════════════════════════════════╗
+# ║  This file contains Liquibase changesets for the product table and sample data.    ║
+# ║  It has multiple changesets for creating the table, adding indexes,                ║
+# ║  inserting sample data, and production catalog data, with rollback statements.     ║
+# ║  The sample data is split into dev/staging/qa and production contexts, with        ║
+# ║  different rows for each environment.                                              ║
+# ╚════════════════════════════════════════════════════════════════════════════════════╝
+
+databaseChangeLog:
+  - changeSet:
+      id: product-table-v2
+      author: harness
+      labels: products-api
+      comment: Creating product table for REST API
+      changes:
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: SERIAL
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: NUMERIC(10,2)
+                  defaultValue: 0.00
+                  constraints:
+                    nullable: false
+      rollback:
+        - dropTable:
+            tableName: product
+
+  - changeSet:
+      id: product-table-indexes-v2
+      author: harness
+      labels: products-api
+      comment: Adding indexes for the products table
+      changes:
+        - createIndex:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+            indexName: idx_products_name
+      rollback:
+        - dropIndex:
+            indexName: idx_products_name
+            tableName: product
+
+  - changeSet:
+      id: product-sample-data-initial
+      author: harness
+      labels: products-api-v2
+      context: "dev,staging,qa"
+      comment: Inserting initial sample data for non-production environments
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Wireless Bluetooth Headphones"
+              - column:
+                  name: price
+                  value: 89.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "USB-C Charging Cable"
+              - column:
+                  name: price
+                  value: 15.99
+      rollback:
+        - delete:
+            tableName: product
+            where: name in ('Wireless Bluetooth Headphones', 'USB-C Charging Cable')
+
+  - changeSet:
+      id: product-sample-data-electronics
+      author: harness
+      labels: products-api
+      context: "dev,staging,qa"
+      comment: Inserting electronics sample data for non-production environments
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Smartphone Case"
+              - column:
+                  name: price
+                  value: 24.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Portable Power Bank"
+              - column:
+                  name: price
+                  value: 45.00
+      rollback:
+        - delete:
+            tableName: product
+            where: name in ('Smartphone Case', 'Portable Power Bank')
+
+  - changeSet:
+      id: product-sample-data-accessories
+      author: harness
+      labels: products-api
+      context: "dev,staging,qa"
+      comment: Inserting accessories sample data for non-production environments
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Wireless Mouse Pad"
+              - column:
+                  name: price
+                  value: 12.50
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Ergonomic Laptop Stand"
+              - column:
+                  name: price
+                  value: 65.99
+      rollback:
+        - delete:
+            tableName: product
+            where: name in ('Wireless Mouse Pad', 'Ergonomic Laptop Stand')
+
+  - changeSet:
+      id: product-production-data-initial
+      author: harness
+      labels: products-api
+      context: "production-na,production-apj"
+      comment: Inserting initial production catalog data
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Professional Wireless Headset"
+              - column:
+                  name: price
+                  value: 149.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Premium USB-C Hub"
+              - column:
+                  name: price
+                  value: 79.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Business Laptop Sleeve"
+              - column:
+                  name: price
+                  value: 39.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "High-Speed External SSD"
+              - column:
+                  name: price
+                  value: 199.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Wireless Presentation Remote"
+              - column:
+                  name: price
+                  value: 49.99
+      rollback:
+        - delete:
+            tableName: product
+            where: name in ('Professional Wireless Headset', 'Premium USB-C Hub', 'Business Laptop Sleeve', 'High-Speed External SSD', 'Wireless Presentation Remote')
+
+  - changeSet:
+      id: product-production-data-enterprise
+      author: harness
+      labels: products-api
+      context: "production-na,production-apj"
+      comment: Inserting enterprise-grade production catalog data
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Enterprise Docking Station"
+              - column:
+                  name: price
+                  value: 299.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "4K Webcam with Auto-Focus"
+              - column:
+                  name: price
+                  value: 189.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Noise-Cancelling Conference Microphone"
+              - column:
+                  name: price
+                  value: 249.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Ergonomic Mechanical Keyboard"
+              - column:
+                  name: price
+                  value: 129.99
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: name
+                  value: "Professional Monitor Stand"
+              - column:
+                  name: price
+                  value: 89.99
+      rollback:
+        - delete:
+            tableName: product
+            where: name in ('Enterprise Docking Station', '4K Webcam with Auto-Focus', 'Noise-Cancelling Conference Microphone', 'Ergonomic Mechanical Keyboard', 'Professional Monitor Stand')
+
+  - changeSet:
+      id: product-table-v3
+      author: harness
+      labels: products-api
+      comment: "v3: Add sku, description, category, stock_quantity, is_available, timestamps to product table"
+      changes:
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  type: VARCHAR(50)
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: description
+                  type: TEXT
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: category
+                  type: VARCHAR(80)
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: stock_quantity
+                  type: INTEGER
+                  defaultValueNumeric: 0
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: is_available
+                  type: BOOLEAN
+                  defaultValueBoolean: true
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+        - addColumn:
+            tableName: product
+            columns:
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+                  defaultValueComputed: NOW()
+      rollback:
+        - dropColumn:
+            tableName: product
+            columnName: sku
+        - dropColumn:
+            tableName: product
+            columnName: description
+        - dropColumn:
+            tableName: product
+            columnName: category
+        - dropColumn:
+            tableName: product
+            columnName: stock_quantity
+        - dropColumn:
+            tableName: product
+            columnName: is_available
+        - dropColumn:
+            tableName: product
+            columnName: created_at
+        - dropColumn:
+            tableName: product
+            columnName: updated_at
+
+  - changeSet:
+      id: product-backfill-v3
+      author: harness
+      labels: products-api
+      comment: "v3: Backfill sku, category, stock_quantity for all existing product rows"
+      changes:
+        - sql:
+            sql: |
+              UPDATE product SET sku = CONCAT('LEGACY-', LPAD(id::text, 4, '0')),
+                                 category = 'Uncategorised',
+                                 stock_quantity = 0,
+                                 is_available = true
+              WHERE sku IS NULL;
+      rollback:
+        - sql:
+            sql: |
+              UPDATE product SET sku = NULL, category = NULL
+              WHERE sku LIKE 'LEGACY-%';
+
+  - changeSet:
+      id: product-sku-unique-constraint-v3
+      author: harness
+      labels: products-api
+      comment: "v3: Add unique constraint on sku column after backfill"
+      changes:
+        - addUniqueConstraint:
+            tableName: product
+            columnNames: sku
+            constraintName: uq_product_sku
+      rollback:
+        - dropUniqueConstraint:
+            tableName: product
+            constraintName: uq_product_sku
+
+  - changeSet:
+      id: product-table-indexes-v3
+      author: harness
+      labels: products-api
+      comment: "v3: Indexes on category, sku, and is_available"
+      changes:
+        - createIndex:
+            tableName: product
+            columns:
+              - column:
+                  name: category
+            indexName: idx_products_category
+        - createIndex:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+            indexName: idx_products_sku
+        - createIndex:
+            tableName: product
+            columns:
+              - column:
+                  name: is_available
+            indexName: idx_products_is_available
+      rollback:
+        - dropIndex:
+            indexName: idx_products_category
+            tableName: product
+        - dropIndex:
+            indexName: idx_products_sku
+            tableName: product
+        - dropIndex:
+            indexName: idx_products_is_available
+            tableName: product
+
+  - changeSet:
+      id: product-sample-data-initial-v3
+      author: harness
+      labels: products-api
+      context: "dev,staging,qa"
+      comment: "v3: New sample rows with full column data for non-production environments"
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ELEC-WBH-001"
+              - column:
+                  name: name
+                  value: "Wireless Bluetooth Headphones Pro"
+              - column:
+                  name: description
+                  value: "Over-ear wireless headphones with 30hr battery, ANC, and foldable design."
+              - column:
+                  name: category
+                  value: "Audio"
+              - column:
+                  name: price
+                  value: 99.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 150
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "CABL-UCC-002"
+              - column:
+                  name: name
+                  value: "USB-C Braided Charging Cable 2m"
+              - column:
+                  name: description
+                  value: "2m nylon braided USB-C to USB-C cable with 100W fast charging support."
+              - column:
+                  name: category
+                  value: "Cables & Adapters"
+              - column:
+                  name: price
+                  value: 18.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 500
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ACCS-SMC-003"
+              - column:
+                  name: name
+                  value: "Rugged Smartphone Case"
+              - column:
+                  name: description
+                  value: "MIL-STD-810G certified shockproof case with raised lip screen protection."
+              - column:
+                  name: category
+                  value: "Phone Accessories"
+              - column:
+                  name: price
+                  value: 27.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 320
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ELEC-PPB-004"
+              - column:
+                  name: name
+                  value: "Portable Power Bank 20000mAh"
+              - column:
+                  name: description
+                  value: "20,000 mAh dual-port power bank with USB-C PD and LED charge indicator."
+              - column:
+                  name: category
+                  value: "Charging"
+              - column:
+                  name: price
+                  value: 49.00
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 210
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ACCS-WMP-005"
+              - column:
+                  name: name
+                  value: "XL Extended Desk Mat"
+              - column:
+                  name: description
+                  value: "900x400mm stitched-edge desk pad with non-slip rubber base."
+              - column:
+                  name: category
+                  value: "Desk Accessories"
+              - column:
+                  name: price
+                  value: 14.50
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 400
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ACCS-ELS-006"
+              - column:
+                  name: name
+                  value: "Adjustable Aluminium Laptop Stand"
+              - column:
+                  name: description
+                  value: "6-angle adjustable laptop stand for up to 17-inch laptops, foldable."
+              - column:
+                  name: category
+                  value: "Desk Accessories"
+              - column:
+                  name: price
+                  value: 68.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 175
+              - column:
+                  name: is_available
+                  valueBoolean: true
+      rollback:
+        - delete:
+            tableName: product
+            where: sku in ('ELEC-WBH-001','CABL-UCC-002','ACCS-SMC-003','ELEC-PPB-004','ACCS-WMP-005','ACCS-ELS-006')
+
+  - changeSet:
+      id: product-production-data-initial-v3
+      author: harness
+      labels: products-api
+      context: "production-na,production-apj"
+      comment: "v3: New production catalog rows with full column data"
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "PRO-PWH-101"
+              - column:
+                  name: name
+                  value: "Professional Wireless Headset ANC"
+              - column:
+                  name: description
+                  value: "Business-grade wireless headset with active noise cancellation and 40hr battery."
+              - column:
+                  name: category
+                  value: "Audio"
+              - column:
+                  name: price
+                  value: 159.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 300
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "PRO-UCH-102"
+              - column:
+                  name: name
+                  value: "Premium 7-in-1 USB-C Hub"
+              - column:
+                  name: description
+                  value: "7-in-1 USB-C hub with 4K HDMI, 100W PD, SD card reader, and 3x USB-A ports."
+              - column:
+                  name: category
+                  value: "Cables & Adapters"
+              - column:
+                  name: price
+                  value: 84.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 220
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "PRO-BLS-103"
+              - column:
+                  name: name
+                  value: "Water-Resistant Business Laptop Sleeve 15in"
+              - column:
+                  name: description
+                  value: "Water-resistant neoprene sleeve for 15-inch laptops with front accessory pocket."
+              - column:
+                  name: category
+                  value: "Bags & Cases"
+              - column:
+                  name: price
+                  value: 42.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 450
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "PRO-SSD-104"
+              - column:
+                  name: name
+                  value: "High-Speed External NVMe SSD 1TB"
+              - column:
+                  name: description
+                  value: "1TB portable NVMe SSD, USB 3.2 Gen2, up to 1050 MB/s read, shock-resistant."
+              - column:
+                  name: category
+                  value: "Storage"
+              - column:
+                  name: price
+                  value: 209.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 130
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "PRO-WPR-105"
+              - column:
+                  name: name
+                  value: "Wireless Laser Presentation Remote"
+              - column:
+                  name: description
+                  value: "Plug-and-play USB clicker with red laser pointer and 100ft wireless range."
+              - column:
+                  name: category
+                  value: "Presentation Tools"
+              - column:
+                  name: price
+                  value: 52.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 280
+              - column:
+                  name: is_available
+                  valueBoolean: true
+      rollback:
+        - delete:
+            tableName: product
+            where: sku in ('PRO-PWH-101','PRO-UCH-102','PRO-BLS-103','PRO-SSD-104','PRO-WPR-105')
+
+  - changeSet:
+      id: product-production-data-enterprise-v3
+      author: harness
+      labels: products-api
+      context: "production-na,production-apj"
+      comment: "v3: New enterprise production catalog rows with full column data"
+      changes:
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ENT-DKS-201"
+              - column:
+                  name: name
+                  value: "Thunderbolt 4 Enterprise Docking Station"
+              - column:
+                  name: description
+                  value: "TB4 dock with dual 4K display output, 96W host charging, 2.5G Ethernet."
+              - column:
+                  name: category
+                  value: "Docking & Connectivity"
+              - column:
+                  name: price
+                  value: 319.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 90
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ENT-4KW-202"
+              - column:
+                  name: name
+                  value: "4K Auto-Focus AI Webcam"
+              - column:
+                  name: description
+                  value: "Sony STARVIS sensor webcam with AI auto-framing, HDR, and dual noise-cancelling mics."
+              - column:
+                  name: category
+                  value: "Video Conferencing"
+              - column:
+                  name: price
+                  value: 199.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 115
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ENT-NCM-203"
+              - column:
+                  name: name
+                  value: "360 Conference Speakerphone"
+              - column:
+                  name: description
+                  value: "Omnidirectional speakerphone with AI noise suppression, covers rooms up to 20 people."
+              - column:
+                  name: category
+                  value: "Audio"
+              - column:
+                  name: price
+                  value: 259.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 75
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ENT-EMK-204"
+              - column:
+                  name: name
+                  value: "Tenkeyless Mechanical Keyboard Cherry MX"
+              - column:
+                  name: description
+                  value: "TKL mechanical keyboard with Cherry MX Red switches, USB-C, and detachable wrist rest."
+              - column:
+                  name: category
+                  value: "Input Devices"
+              - column:
+                  name: price
+                  value: 139.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 200
+              - column:
+                  name: is_available
+                  valueBoolean: true
+        - insert:
+            tableName: product
+            columns:
+              - column:
+                  name: sku
+                  value: "ENT-PMS-205"
+              - column:
+                  name: name
+                  value: "Dual-Arm Monitor Stand 32in"
+              - column:
+                  name: description
+                  value: "Heavy-duty steel dual-arm stand for monitors up to 32 inches with full articulation."
+              - column:
+                  name: category
+                  value: "Desk Accessories"
+              - column:
+                  name: price
+                  value: 94.99
+              - column:
+                  name: stock_quantity
+                  valueNumeric: 160
+              - column:
+                  name: is_available
+                  valueBoolean: true
+      rollback:
+        - delete:
+            tableName: product
+            where: sku in ('ENT-DKS-201','ENT-4KW-202','ENT-NCM-203','ENT-EMK-204','ENT-PMS-205')

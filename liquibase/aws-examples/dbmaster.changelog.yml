@@ -1,0 +1,13 @@
+# ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════╗
+# ║                                      dbmaster.changelog.yaml                                          ║
+# ╚═══════════════════════════════════════════════════════════════════════════════════════════════════════╝
+
+databaseChangeLog:
+  - include:
+      file: db/v1.0/001-create-users-table.yaml
+  - include:
+      file: db/v1.0/002-create-products-table.yaml
+  - include:
+      file: db/v1.0/003-create-orders-table.yaml
+  - include:
+      file: db/v1.0/004-add-indexes.yaml

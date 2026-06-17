@@ -1,0 +1,14 @@
+package db_sql
+
+deny[msg] {
+    some l
+    sql := lower(input.sqlStatements[l])
+    
+    matches := regex.find_n(`(?i)create\s+database\s+([a-zA-Z0-9_]+)`, sql, -1)
+
+    actual_db_name := matches[count(matches) - 1]
+
+    count(actual_db_name) > 30
+
+    msg := sprintf("Database name '%s' exceeds 30 characters, which is not permitted", [actual_db_name])
+}

@@ -1,0 +1,7 @@
+package db_sql
+
+deny[msg] {
+    count(input.sqlStatements) > 50
+    
+    msg := "Transaction contains too many statements. Please break it into smaller transactions."
+}

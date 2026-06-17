@@ -1,0 +1,20 @@
+package db_sql
+
+deny[msg] {
+    some l
+    sql := lower(input.sqlStatements[l])
+    
+    # Extract table name, handling optional schema (e.g., "public.")
+    matches := regex.find_n(`(?i)create\s+table\s+([a-zA-Z0-9_]+\.)?([a-zA-Z0-9_]+)`, sql, -1)
+
+    some j
+    table_name := matches[j]  # Extract match
+
+    # If the table has a schema prefix, extract just the table name part
+    parts := split(table_name, ".")
+    actual_table_name := parts[count(parts) - 1]
+
+    count(actual_table_name) > 10
+
+    msg := sprintf("Table name '%s' exceeds 10 characters, which is not permitted", [actual_table_name])
+}

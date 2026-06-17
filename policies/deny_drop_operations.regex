@@ -1,0 +1,35 @@
+package db_sql
+
+policies := [
+{
+   "error_message": "Dropping of data structures is not allowed.",
+   "rules": [
+       {
+           "types": [
+               "jdbc:sqlserver","jdbc:mysql","jdbc:postgresql","jdbc:oracle:thin"
+           ],
+           "regex": [
+               "drop\\s+table",
+               "drop\\s+database",
+               "drop\\s+schema",
+               "drop\\s+column"
+           ]
+       }
+   ]
+}
+]
+
+deny[msg] {
+   some i,j,k,l
+   policy := policies[i];
+   type := input.dbInstance.type;
+   rule := policy.rules[j];
+   type = rule.types[_];
+   regex.match(lower(concat("",[".*",rule.regex[k],".*"])),lower(input.sqlStatements[l]));
+   not is_temp_table_drop(input.sqlStatements[l]);
+   msg := concat("",["Policy violation:\n The following sql statement:\n",input.sqlStatements[l],"\n\n Matches the following regex: \n",rule.regex[k]])
+}
+
+is_temp_table_drop(stmt) {
+   regex.match("drop\\s+table\\s+#\\w+", lower(stmt))
+}

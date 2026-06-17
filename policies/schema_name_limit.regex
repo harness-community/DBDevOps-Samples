@@ -1,0 +1,16 @@
+package db_sql
+
+deny[msg] {
+    some l
+    sql := lower(input.sqlStatements[l])
+    
+    # Extract schema name
+    matches := regex.find_n(`(?i)create\s+schema\s+([a-zA-Z0-9_]+)`, sql, -1)
+    
+    some j
+    schema_name := matches[j]
+    
+    count(schema_name) > 30
+    
+    msg := sprintf("Schema name '%s' exceeds 30 characters, which is not permitted", [schema_name])
+}

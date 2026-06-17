@@ -1,0 +1,16 @@
+package db_sql
+
+deny[msg] {
+    some l
+    sql := lower(input.sqlStatements[l])
+    
+    system_tables := [
+        "sys\\.", "information_schema\\.", "pg_catalog\\.",
+        "sysobjects", "syscolumns", "sysusers"
+    ]
+    
+    some i
+    regex.match(concat("", [".*select.*from.*", system_tables[i], ".*"]), sql)
+    
+    msg := sprintf("Direct access to system tables is not permitted: %s", [sql])
+}
