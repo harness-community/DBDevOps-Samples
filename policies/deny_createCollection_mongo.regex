@@ -1,0 +1,42 @@
+# Deny MongoDB createCollection if there is no index on "id"
+package mongodbopa
+
+deny[msg] {
+
+    changeset := input.changesets[_]
+    change := changeset.content.changes[_]
+    collection := change.createCollection
+    collection
+    not has_id_index(collection.indexes)
+    msg := sprintf(
+        "Changeset '%v': MongoDB collection '%v' must define an index on 'id'",
+        [changeset.changesetFqn, collection.collectionName]
+    )
+}
+
+has_id_index(indexes) {
+    index := indexes[_]
+    index.name == "id"
+}
+
+deny[msg] {
+    changeset := input.changesets[_]
+    change := changeset.content.changes[_]
+    collection := change.createCollection
+    not collection.indexes
+    msg := sprintf(
+        "Changeset '%v': MongoDB collection '%v' must define an index on 'id'",
+        [changeset.changesetFqn, collection.collectionName]
+    )
+}
+
+#rollback
+deny[msg] {
+    changeset := input.changesets[_]
+    collection := changeset.content.rollback.dropCollection
+
+    msg := sprintf(
+        "Changeset '%v': dropCollection for collection '%v' is not allowed",
+        [changeset.changesetFqn, collection.collectionName]
+    )
+}
