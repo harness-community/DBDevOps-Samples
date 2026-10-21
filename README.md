@@ -44,8 +44,9 @@ The [`policies/`](policies/) directory contains [OPA](https://www.openpolicyagen
 | `table_name_limit.regex` | Rejects table names exceeding 10 characters |
 | `schema_name_limit.regex` | Rejects schema names exceeding 30 characters |
 | `database_name_limit.regex` | Rejects database names exceeding 30 characters |
+| `deny_createCollection_mongo.regex` | MongoDB: rejects `createCollection` changes that don't define an index named `id`, and rejects `dropCollection` in rollback blocks |
 
-> The policy files themselves contain no inline comments — this table is the reference.
+> Most policy files contain no inline comments — this table is the reference.
 
 ## Additional Resources
 
